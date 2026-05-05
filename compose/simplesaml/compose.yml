@@ -4,13 +4,14 @@ services:
     container_name: simplesaml
     restart: unless-stopped
     environment:
-      - SIMPLESAMLPHP_SP_ENTITY_ID=https://idp.tpiam.internal/realms/tpiam
-      - SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE=https://simplesaml.tpiam.internal/saml/acs
-      - SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE=https://simplesaml.tpiam.internal/saml/sls
-      - SP_SSO_URL=https://idp.tpiam.internal/realms/tpiam/protocol/saml
-      - SP_SSO_BINDING=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
-      - SP_ENTITY_ID=https://idp.tpiam.internal/realms/tpiam
-      - SP_ROOT_URL=https://simplesaml.tpiam.internal
+      # Logs visibles dans docker logs
+      - DOCKER_REDIRECTLOGS=true
+      - CONFIG_BASEURLPATH=simplesaml/
+    volumes:
+      # Fichier SP : entity ID + quel IdP utiliser
+      - ./authsources.php:/var/simplesamlphp/config/authsources.php:ro
+      # Métadonnées de Keycloak (certificat de signature, endpoints SSO)
+      - ./saml20-idp-remote.php:/var/simplesamlphp/metadata/saml20-idp-remote.php:ro
     networks:
       - NetApp
 
