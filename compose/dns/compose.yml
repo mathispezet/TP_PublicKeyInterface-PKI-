@@ -1,0 +1,17 @@
+services:
+  coredns:
+    image: coredns/coredns:latest
+    container_name: coredns
+    command: -conf /etc/coredns/Corefile -dns.port 53
+    ports:
+      - "53:53"
+      - "53:53/udp"
+    volumes:
+      - ./Corefile:/etc/coredns/Corefile
+      - ./db.tpiam.internal:/etc/coredns/db.tpiam.internal
+    networks:
+      - NetAccess
+
+networks:
+  NetAccess:
+    external: true

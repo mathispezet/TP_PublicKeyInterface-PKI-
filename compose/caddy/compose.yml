@@ -1,0 +1,40 @@
+volumes:
+  data:
+  config:
+
+services:
+  caddy:
+    image: caddy:latest
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./root-ca.pem:/etc/caddy/trusted-roots/root-ca.pem:ro
+      - data:/data
+      - config:/config
+    restart: unless-stopped
+    container_name: RP-caddy
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      NetAuth:
+        aliases:
+          - portail.tpiam.internal
+          - simpleapp.tpiam.internal
+          - dockhand.tpiam.internal
+          - mail.tpiam.internal
+          - simplesaml.tpiam.internal
+          - idp.tpiam.internal
+      NetApp:
+      NetAdmin:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  NetAuth:
+    external: true
+  NetApp:
+    external: true
+  NetAdmin:
+    external: true

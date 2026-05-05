@@ -1,0 +1,12 @@
+.:53 {
+    forward . 86.54.11.1
+    log
+    errors
+    health :8080
+}
+
+tpiam.internal:53 {
+    file /etc/coredns/db.tpiam.internal
+    log
+    errors
+}

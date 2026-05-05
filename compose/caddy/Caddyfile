@@ -1,0 +1,50 @@
+{
+    log {
+        level DEBUG
+    }
+}
+
+(tls-acme-stepca) {
+  tls {
+    ca https://step-ca:9443/acme/acme/directory
+    ca_root /etc/caddy/trusted-roots/root-ca.pem
+  }
+}
+
+
+https://portail.tpiam.internal {
+        import tls-acme-stepca
+        reverse_proxy http://dashy:8080
+}
+
+https://simpleapp.tpiam.internal {
+        import tls-acme-stepca
+        reverse_proxy http://simpleapp:5000 {
+                header_up Host "simpleapp"
+        }
+}
+
+https://dockhand.tpiam.internal {
+        import tls-acme-stepca
+        reverse_proxy http://dockhand:3000 {
+                header_up Host "dockhand:3000"
+        }
+        log {
+                output stdout level DEBUG
+        }
+}
+
+https://mail.tpiam.internal {
+        import tls-acme-stepca
+        reverse_proxy http://mailhog:8025
+}
+
+https://simplesaml.tpiam.internal {
+        import tls-acme-stepca
+        reverse_proxy http://simplesaml:8080
+}
+
+https://idp.tpiam.internal {
+        import tls-acme-stepca
+        reverse_proxy http://keycloak:8080
+}

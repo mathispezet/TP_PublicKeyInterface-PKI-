@@ -1,0 +1,35 @@
+pageInfo:
+  title: TP IAM - Portail
+  description: Portail du TP PKI & IAM
+  navLinks: []
+
+appConfig:
+  theme: dark
+  layout: auto
+  iconSize: large
+  language: fr
+
+sections:
+  - name: Services
+    icon: fas fa-server
+    items:
+      - title: Dockhand
+        description: Gestion des containers Docker
+        url: https://dockhand.tpiam.internal
+        icon: fas fa-docker
+      - title: Mailhog
+        description: Intercepteur d'emails
+        url: https://mail.tpiam.internal
+        icon: fas fa-envelope
+      - title: SimpleApp
+        description: Application Flask - HTTP Headers
+        url: https://simpleapp.tpiam.internal
+        icon: fas fa-code
+      - title: SimpleSAML
+        description: Application SAML
+        url: https://simplesaml.tpiam.internal
+        icon: fas fa-shield-alt
+      - title: Keycloak (IdP)
+        description: Identity Provider
+        url: https://idp.tpiam.internal
+        icon: fas fa-key

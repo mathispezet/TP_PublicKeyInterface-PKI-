@@ -1,0 +1,13 @@
+services:
+  dashy:
+    image: lissy93/dashy:latest
+    container_name: dashy
+    restart: unless-stopped
+    volumes:
+      - ./conf.yml:/app/user-data/conf.yml
+    networks:
+      - NetApp
+
+networks:
+  NetApp:
+    external: true

@@ -1,0 +1,11 @@
+$ORIGIN tpiam.internal.
+@         IN  SOA dns.tpiam.internal. prof.tpiam.internal. 2605050954 7200 3600 1209600 3600
+dns       IN  A   127.0.0.1
+portail   IN  CNAME   dns
+dashy     IN  CNAME   dns
+simpleapp IN  CNAME   dns
+simplesaml IN  CNAME   dns
+dockhand  IN  CNAME   dns
+idp       IN  CNAME   dns
+mail      IN  CNAME   dns
+pki       IN  CNAME   dns

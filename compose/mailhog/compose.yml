@@ -1,0 +1,17 @@
+services:
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - NetApp
+      - NetAuth
+
+networks:
+  NetApp:
+    external: true
+  NetAuth:
+    external: true

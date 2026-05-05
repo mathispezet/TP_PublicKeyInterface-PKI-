@@ -1,0 +1,19 @@
+services:
+  simplesaml:
+    image: venatorfox/simplesamlphp:latest
+    container_name: simplesaml
+    restart: unless-stopped
+    environment:
+      - SIMPLESAMLPHP_SP_ENTITY_ID=https://idp.tpiam.internal/realms/tpiam
+      - SIMPLESAMLPHP_SP_ASSERTION_CONSUMER_SERVICE=https://simplesaml.tpiam.internal/saml/acs
+      - SIMPLESAMLPHP_SP_SINGLE_LOGOUT_SERVICE=https://simplesaml.tpiam.internal/saml/sls
+      - SP_SSO_URL=https://idp.tpiam.internal/realms/tpiam/protocol/saml
+      - SP_SSO_BINDING=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST
+      - SP_ENTITY_ID=https://idp.tpiam.internal/realms/tpiam
+      - SP_ROOT_URL=https://simplesaml.tpiam.internal
+    networks:
+      - NetApp
+
+networks:
+  NetApp:
+    external: true

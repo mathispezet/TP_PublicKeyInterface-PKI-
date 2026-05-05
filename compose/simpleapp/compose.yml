@@ -1,0 +1,11 @@
+services:
+  simpleapp:
+    build: .
+    container_name: simpleapp
+    restart: unless-stopped
+    networks:
+      - NetApp
+
+networks:
+  NetApp:
+    external: true

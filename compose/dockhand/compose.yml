@@ -1,0 +1,25 @@
+services:
+  dockhand:
+    image: fnsys/dockhand:latest
+    container_name: dockhand
+    restart: unless-stopped
+    # ports:
+    #   - 3001:3000  # Supprimé : accès uniquement via Caddy (étape 14)
+    environment:
+      - NODE_EXTRA_CA_CERTS=/app/certs/my_ca.crt
+      - OIDC_ISSUER_URL=https://idp.tpiam.internal/realms/tpiam
+      - OIDC_CLIENT_ID=dockhand
+      - OIDC_CLIENT_SECRET=xjLbdX9685Q4awcqKTgCgFxMdjtxufxl
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - dockhand_data:/app/data
+      - ./root_ca.crt:/app/certs/my_ca.crt
+    networks:
+      - NetAdmin
+
+networks:
+  NetAdmin:
+    external: true
+
+volumes:
+  dockhand_data:

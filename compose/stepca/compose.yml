@@ -1,0 +1,24 @@
+services:
+  step-ca:
+    image: smallstep/step-ca:latest
+    container_name: step-ca
+    restart: unless-stopped
+    ports:
+      - "9443:9443"
+    environment:
+      - DOCKER_STEPCA_INIT_NAME=TPiam PKI
+      - DOCKER_STEPCA_INIT_DNS_NAMES=pki.tpiam.internal,step-ca,localhost
+      - DOCKER_STEPCA_INIT_REMOTE_MANAGEMENT=true
+      - DOCKER_STEPCA_INIT_ACME=true
+      - DOCKER_STEPCA_INIT_ADDRESS=:9443
+    volumes:
+      - stepca_data:/home/step
+    networks:
+      - NetAuth
+
+networks:
+  NetAuth:
+    external: true
+
+volumes:
+  stepca_data:
