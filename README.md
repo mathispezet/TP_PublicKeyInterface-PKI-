@@ -200,7 +200,12 @@ TP_PKI_IAM/
 │   │   ├── app.py
 │   │   └── requirements.txt
 │   ├── simplesaml/              ← SAML Service Provider
-│   │   └── compose.yml
+│   │   ├── compose.yml
+│   │   ├── authsources.php      ← Configuration du SP (entityID, IdP, certificat)
+│   │   ├── saml20-idp-remote.php ← Métadonnées Keycloak (endpoints, certificat IdP)
+│   │   └── certs/               ← Certificat SP pour signer les AuthnRequests
+│   │       ├── saml.pem         ← Clé privée (extraite du keystore Keycloak)
+│   │       └── saml.crt         ← Certificat public
 │   ├── mailhog/                 ← Intercepteur d'emails
 │   │   └── compose.yml
 │   ├── stepca/                  ← PKI / Autorité de certification

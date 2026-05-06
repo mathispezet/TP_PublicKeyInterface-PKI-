@@ -6,12 +6,14 @@ services:
     environment:
       # Logs visibles dans docker logs
       - DOCKER_REDIRECTLOGS=true
-      - CONFIG_BASEURLPATH=simplesaml/
+      - CONFIG_BASEURLPATH=https://simplesaml.tpiam.internal/simplesaml/
     volumes:
       # Fichier SP : entity ID + quel IdP utiliser
       - ./authsources.php:/var/simplesamlphp/config/authsources.php:ro
       # Métadonnées de Keycloak (certificat de signature, endpoints SSO)
       - ./saml20-idp-remote.php:/var/simplesamlphp/metadata/saml20-idp-remote.php:ro
+      # Certificat SP pour signer les AuthnRequests
+      - ./certs:/var/simplesamlphp/cert:ro
     networks:
       - NetApp
 

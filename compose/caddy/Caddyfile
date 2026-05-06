@@ -41,7 +41,7 @@ https://mail.tpiam.internal {
 
 https://simplesaml.tpiam.internal {
         import tls-acme-stepca
-        reverse_proxy http://simplesaml:8080
+        reverse_proxy http://simplesaml:80
 }
 
 https://idp.tpiam.internal {

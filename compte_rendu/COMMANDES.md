@@ -363,17 +363,108 @@ Accéder à : **https://idp.tpiam.internal**
 
 ## Étape 12 : SAML — Relier SimpleSAML à Keycloak
 
-### Dans Keycloak (admin, realm tpiam) :
-1. Menu **Clients** → **Create Client**
-   - Client type : **SAML**
-   - ClientID : `https://idp.tpiam.internal/realms/tpiam`
-   - Name : SimpleSAML
-   - Root URL : `https://simplesaml.tpiam.internal`
-   - Valid Redirect URL : `/saml/acs`
-   - Sign Documents & Assertions : ✅
-   - Signature algorithm : **SHA256**
-   - SAML signature key name : **keyID**
-   - Canonicalization method : **exclusive**
+### 12.1 — Créer les fichiers de configuration SimpleSAML
+
+Créer `compose/simplesaml/authsources.php` :
+```php
+<?php
+$config = [
+    'admin' => ['core:AdminPassword'],
+    'default-sp' => [
+        'saml:SP',
+        'entityID'    => 'https://simplesaml.tpiam.internal',
+        'idp'         => 'https://idp.tpiam.internal/realms/tpiam',
+        'privatekey'  => 'saml.pem',
+        'certificate' => 'saml.crt',
+    ],
+];
+```
+
+Récupérer le certificat de signature Keycloak depuis le descriptor :
+```
+https://idp.tpiam.internal/realms/tpiam/protocol/saml/descriptor
+```
+Copier la valeur du `<ds:X509Certificate>` et créer `compose/simplesaml/saml20-idp-remote.php` :
+```php
+<?php
+$metadata['https://idp.tpiam.internal/realms/tpiam'] = [
+    'entityid' => 'https://idp.tpiam.internal/realms/tpiam',
+    'name'     => ['en' => 'Keycloak tpiam'],
+    'sign.authnrequest' => true,
+    'SingleSignOnService'         => 'https://idp.tpiam.internal/realms/tpiam/protocol/saml',
+    'SingleSignOnService.binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+    'SingleLogoutService'         => 'https://idp.tpiam.internal/realms/tpiam/protocol/saml',
+    'SingleLogoutService.binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+    'certData' => '<coller ici le contenu X509Certificate du descriptor>',
+];
+```
+
+### 12.2 — Générer le certificat SP (clé de signature)
+
+Dans Keycloak, **créer d'abord le client SAML** (étape 12.3 ci-dessous), puis dans l'onglet **Keys** du client :
+- Cliquer **Generate new keys**
+- Saisir un alias (ex: `tpiam`) et un mot de passe (ex: `password`)
+- Télécharger le fichier **keystore.jks** généré
+
+Extraire la clé privée et le certificat du JKS (nécessite Docker) :
+```powershell
+# Convertir JKS → PKCS12
+docker run --rm -v "c:\...\TP_PublicKeyInterface-PKI-:/work" eclipse-temurin:21-jre-alpine `
+  sh -c "keytool -importkeystore -srckeystore /work/keystore.jks -destkeystore /work/keystore.p12 -deststoretype PKCS12 -srcstorepass password -deststorepass password -noprompt"
+
+# Extraire clé privée et certificat en PEM (nécessite Git Bash)
+openssl pkcs12 -in keystore.p12 -passin pass:password -nocerts -nodes -out compose/simplesaml/certs/saml.pem
+openssl pkcs12 -in keystore.p12 -passin pass:password -clcerts -nokeys -out compose/simplesaml/certs/saml.crt
+
+# Nettoyer
+rm keystore.p12
+```
+
+### 12.3 — Créer le client SAML dans Keycloak
+
+1. Menu **Clients** → **Import client**
+2. Récupérer d'abord les métadonnées SP :
+   ```bash
+   curl -sk https://simplesaml.tpiam.internal/simplesaml/module.php/saml/sp/metadata.php/default-sp -o sp-metadata.xml
+   ```
+3. Importer le fichier `sp-metadata.xml` → Keycloak configure automatiquement :
+   - Client ID : `https://simplesaml.tpiam.internal`
+   - ACS URL : `https://simplesaml.tpiam.internal/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp`
+   - Certificat de signature du SP
+4. Vérifier que **Sign Documents** et **Sign Assertions** sont activés
+5. **Save**
+
+> ⚠️ L'ACS URL dans Keycloak doit être **exactement** :
+> `https://simplesaml.tpiam.internal/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp`
+> (pas `/saml/acs` ou toute autre variante)
+
+### 12.4 — Monter les certificats et configurer la base URL
+
+Mettre à jour `compose/simplesaml/compose.yml` :
+```yaml
+environment:
+  - DOCKER_REDIRECTLOGS=true
+  - CONFIG_BASEURLPATH=https://simplesaml.tpiam.internal/simplesaml/
+volumes:
+  - ./authsources.php:/var/simplesamlphp/config/authsources.php:ro
+  - ./saml20-idp-remote.php:/var/simplesamlphp/metadata/saml20-idp-remote.php:ro
+  - ./certs:/var/simplesamlphp/cert:ro
+```
+
+> ⚠️ `CONFIG_BASEURLPATH` doit contenir l'URL complète en `https://` — sans cela, SimpleSAML génère
+> les URLs de callback en `http://`, que Keycloak refuse (mismatch ACS URL → 400).
+
+### 12.5 — Redémarrer et tester
+
+```powershell
+docker compose -f compose\simplesaml\compose.yml up -d --force-recreate
+```
+
+Tester :
+1. Aller sur `https://simplesaml.tpiam.internal/simplesaml/module.php/core/authenticate.php?as=default-sp`
+2. Redirection vers la page de login Keycloak ✅
+3. Se connecter avec `alice` / `Alice123!`
+4. Retour sur SimpleSAML avec les attributs SAML affichés ✅
 
 ---
 

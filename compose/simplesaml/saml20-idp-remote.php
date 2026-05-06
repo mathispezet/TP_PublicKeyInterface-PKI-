@@ -8,12 +8,11 @@ $metadata['https://idp.tpiam.internal/realms/tpiam'] = [
     'entityid' => 'https://idp.tpiam.internal/realms/tpiam',
     'name'     => ['en' => 'Keycloak tpiam'],
 
-    // Keycloak exige que les AuthnRequests soient signées (WantAuthnRequestsSigned=true)
     'sign.authnrequest' => true,
 
-    // Endpoint SSO (HTTP-POST)
+    // Endpoint SSO (HTTP-Redirect)
     'SingleSignOnService'         => 'https://idp.tpiam.internal/realms/tpiam/protocol/saml',
-    'SingleSignOnService.binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+    'SingleSignOnService.binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
 
     // Endpoint SLO (HTTP-Redirect)
     'SingleLogoutService'         => 'https://idp.tpiam.internal/realms/tpiam/protocol/saml',
