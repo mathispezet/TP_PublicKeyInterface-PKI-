@@ -1,540 +1,217 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-<meta charset="UTF-8">
-<title>Compte-rendu TP PKI &amp; IAM</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8">
+  <title>Compte-rendu TP PKI & IAM</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      max-width: 900px;
+      margin: 40px auto;
+      color: #222;
+    }
 
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    font-size: 13px;
-    color: #1a1a1a;
-    background: #fff;
-    line-height: 1.6;
-  }
+    h1 {
+      text-align: center;
+      margin-bottom: 5px;
+    }
 
-  /* ── Page de couverture ── */
-  .cover {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    border-bottom: 3px solid #2c5f8a;
-    page-break-after: always;
-  }
-  .cover h1 { font-size: 2.2em; color: #2c5f8a; margin-bottom: 0.3em; }
-  .cover h2 { font-size: 1.3em; font-weight: normal; color: #555; margin-bottom: 2em; }
-  .cover .meta { font-size: 1em; color: #333; line-height: 2; }
-  .cover .meta strong { color: #2c5f8a; }
+    .subtitle {
+      text-align: center;
+      color: #555;
+      margin-bottom: 40px;
+    }
 
-  /* ── Sommaire ── */
-  .toc { padding: 3em 4em; page-break-after: always; }
-  .toc h2 { font-size: 1.4em; color: #2c5f8a; border-bottom: 2px solid #2c5f8a; padding-bottom: 0.4em; margin-bottom: 1.2em; }
-  .toc ol { list-style: none; counter-reset: toc; }
-  .toc ol li { counter-increment: toc; padding: 0.25em 0; border-bottom: 1px dotted #ccc; }
-  .toc ol li::before { content: counter(toc) ". "; color: #2c5f8a; font-weight: bold; min-width: 2em; display: inline-block; }
-  .toc .toc-sub { margin-left: 2em; font-size: 0.92em; color: #555; border-bottom: none; }
-  .toc .toc-sub::before { content: ""; }
+    h2 {
+      border-bottom: 2px solid #333;
+      padding-bottom: 4px;
+      margin-top: 40px;
+    }
 
-  /* ── Sections / étapes ── */
-  .step {
-    padding: 2.5em 4em;
-    page-break-inside: avoid;
-  }
-  .step + .step { border-top: 1px solid #e0e0e0; }
+    h3 {
+      margin-top: 16px;
+      margin-bottom: 4px;
+    }
 
-  .step-header {
-    display: flex;
-    align-items: center;
-    gap: 1em;
-    margin-bottom: 1.2em;
-  }
-  .step-num {
-    background: #2c5f8a;
-    color: white;
-    font-weight: bold;
-    font-size: 1em;
-    padding: 0.3em 0.7em;
-    border-radius: 4px;
-    white-space: nowrap;
-  }
-  .step-title { font-size: 1.25em; font-weight: bold; color: #2c5f8a; }
+    pre {
+      background: #f4f4f4;
+      padding: 10px;
+      font-size: 12px;
+      overflow-x: auto;
+      border-left: 3px solid #888;
+    }
 
-  h3 { font-size: 1em; color: #2c5f8a; margin: 1.2em 0 0.5em; }
+    .screenshot {
+      border: 2px dashed #bbb;
+      background: #fafafa;
+      text-align: center;
+      padding: 30px;
+      color: #888;
+      margin: 12px 0;
+      font-style: italic;
+    }
 
-  p { margin-bottom: 0.7em; }
+    p {
+      margin: 6px 0 10px;
+    }
 
-  ul, ol { margin: 0.5em 0 0.7em 1.5em; }
-  ul li, ol li { margin-bottom: 0.3em; }
+    ul {
+      margin: 4px 0 10px 20px;
+    }
 
-  /* ── Blocs de code ── */
-  pre {
-    background: #f3f4f6;
-    border-left: 3px solid #2c5f8a;
-    padding: 0.8em 1em;
-    margin: 0.6em 0;
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 0.88em;
-    overflow-x: auto;
-    border-radius: 0 4px 4px 0;
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 10px 0;
+    }
 
-  code {
-    background: #f3f4f6;
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 0.9em;
-    padding: 0.1em 0.3em;
-    border-radius: 3px;
-  }
+    th {
+      background: #333;
+      color: white;
+      padding: 6px 10px;
+      text-align: left;
+    }
 
-  /* ── Notes / avertissements ── */
-  .note {
-    background: #eef4fb;
-    border-left: 3px solid #2c5f8a;
-    padding: 0.6em 1em;
-    margin: 0.7em 0;
-    border-radius: 0 4px 4px 0;
-    font-size: 0.92em;
-  }
-  .warn {
-    background: #fff8e6;
-    border-left: 3px solid #e6a817;
-    padding: 0.6em 1em;
-    margin: 0.7em 0;
-    border-radius: 0 4px 4px 0;
-    font-size: 0.92em;
-  }
-  .success {
-    background: #edfaf1;
-    border-left: 3px solid #27ae60;
-    padding: 0.6em 1em;
-    margin: 0.7em 0;
-    border-radius: 0 4px 4px 0;
-    font-size: 0.92em;
-  }
+    td {
+      border: 1px solid #ccc;
+      padding: 5px 10px;
+    }
 
-  /* ── Placeholder capture d'écran ── */
-  .screenshot {
-    border: 2px dashed #aab8c8;
-    background: #f7f9fb;
-    border-radius: 6px;
-    padding: 2.5em 1em;
-    text-align: center;
-    color: #6a8aab;
-    font-size: 0.9em;
-    margin: 1em 0;
-  }
-  .screenshot span { display: block; font-size: 1.5em; margin-bottom: 0.3em; }
+    img {
+      max-width: 100%;
+      border: 1px solid #ccc;
+      margin: 12px 0;
+      display: block;
+    }
 
-  /* ── Tableau ── */
-  table { width: 100%; border-collapse: collapse; margin: 0.8em 0; font-size: 0.92em; }
-  th { background: #2c5f8a; color: white; padding: 0.5em 0.8em; text-align: left; }
-  td { padding: 0.4em 0.8em; border-bottom: 1px solid #dde; }
-  tr:nth-child(even) td { background: #f7f9fb; }
-
-  /* ── Page break ── */
-  .page-break { page-break-before: always; }
-
-  @media print {
-    body { font-size: 11px; }
-    .cover { height: 100vh; }
-    .step { page-break-inside: auto; }
-    pre { font-size: 0.82em; }
-    @page { margin: 1.8cm 2cm; }
-  }
-</style>
+    @media print {
+      @page {
+        margin: 2cm;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<!-- ══════════════════════════════════════════
-     PAGE DE COUVERTURE
-══════════════════════════════════════════ -->
-<div class="cover">
-  <h1>TP PKI &amp; IAM</h1>
-  <h2>Infrastructure d'authentification avec Docker</h2>
-  <div class="meta">
-    <strong>Étudiant :</strong> Mathis Pezet<br>
-    <strong>Année :</strong> 2025 – 2026<br>
-    <strong>Sujet :</strong> Public Key Infrastructure &amp; Identity Access Management<br>
-    <strong>Technologies :</strong> Docker · Keycloak · SimpleSAMLphp · StepCA · Caddy · CoreDNS
-  </div>
-</div>
+  <h1>Compte-rendu — TP PKI & IAM</h1>
+  <p class="subtitle">Mathis Pezet — 2025/2026</p>
 
-<!-- ══════════════════════════════════════════
-     SOMMAIRE
-══════════════════════════════════════════ -->
-<div class="toc">
-  <h2>Sommaire</h2>
-  <ol>
-    <li>Prérequis Windows</li>
-    <li>Création des réseaux Docker</li>
-    <li>Lancement de CoreDNS</li>
-    <li>Lancement de Dockhand</li>
-    <li>Lancement de Mailhog</li>
-    <li>Lancement de Caddy (Reverse Proxy)</li>
-    <li>Lancement de Dashy (Portail)</li>
-    <li>Lancement de SimpleApp (Flask)</li>
-    <li>Lancement de SimpleSAML</li>
-    <li>PKI — Lancement de StepCA</li>
-    <li>PKI — Configuration ACME avec Caddy</li>
-    <li>Lancement de Keycloak (IdP)</li>
-    <li>SAML — Intégration SimpleSAML / Keycloak
-      <ul class="toc-sub">
-        <li>Fichiers de configuration SimpleSAML</li>
-        <li>Génération du certificat SP</li>
-        <li>Import des métadonnées dans Keycloak</li>
-        <li>Configuration du compose et test final</li>
-      </ul>
-    </li>
-    <li>OIDC — Intégration Dockhand / Keycloak</li>
-    <li>Sécurisation de l'accès Dockhand</li>
-    <li>Politique de mot de passe</li>
-    <li>MFA / OTP</li>
-  </ol>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 0
-══════════════════════════════════════════ -->
-<div class="step page-break">
-  <div class="step-header">
-    <span class="step-num">Étape 0</span>
-    <span class="step-title">Prérequis Windows</span>
-  </div>
-
-  <h3>Vérification de Docker</h3>
-  <p>Avant de démarrer, on vérifie que Docker Desktop est fonctionnel :</p>
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 0 — Prérequis Windows</h2>
+  <p>Vérification que Docker fonctionne :</p>
   <pre>docker run hello-world</pre>
-  <div class="screenshot"><span>📸</span>Capture : sortie "Hello from Docker!" dans le terminal</div>
+  <img src="captures/01-hello-world.png" alt="docker run hello-world">
 
-  <h3>Résolution DNS côté client</h3>
-  <p>
-    Sur Windows, la résolution des noms <code>*.tpiam.internal</code> est assurée par le fichier
-    <code>hosts</code> (en attendant que CoreDNS soit en place). On l'édite en PowerShell Administrateur :
-  </p>
-  <pre>Add-Content -Path C:\Windows\System32\drivers\etc\hosts -Value "`n# TP PKI &amp; IAM`n127.0.0.1 portail.tpiam.internal`n127.0.0.1 simpleapp.tpiam.internal`n127.0.0.1 simplesaml.tpiam.internal`n127.0.0.1 dockhand.tpiam.internal`n127.0.0.1 idp.tpiam.internal`n127.0.0.1 mail.tpiam.internal`n127.0.0.1 pki.tpiam.internal"</pre>
+  <p>Ajout des entrées DNS dans le fichier hosts (PowerShell admin) :</p>
+  <pre>Add-Content -Path C:\Windows\System32\drivers\etc\hosts -Value "127.0.0.1 portail.tpiam.internal
+127.0.0.1 simplesaml.tpiam.internal
+127.0.0.1 dockhand.tpiam.internal
+127.0.0.1 idp.tpiam.internal
+127.0.0.1 mail.tpiam.internal"</pre>
+  <img src="captures/00-hosts-cat.png" alt="cat fichier hosts">
+  <img src="captures/00b-hosts-content.png" alt="contenu fichier hosts avec entrées tpiam">
 
-  <p>Vérification :</p>
-  <pre>Get-Content C:\Windows\System32\drivers\etc\hosts | Select-String "tpiam"</pre>
-  <div class="screenshot"><span>📸</span>Capture : contenu du fichier hosts avec les entrées tpiam.internal</div>
-</div>
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 1 — Création des réseaux Docker</h2>
+  <p>On crée 4 réseaux isolés pour segmenter l'infrastructure :</p>
+  <pre>docker network create --subnet=192.168.101.0/25 NetApp
+docker network create --subnet=192.168.101.128/25 NetAuth
+docker network create --subnet=192.168.102.128/25 NetAdmin
+docker network create --subnet=192.168.102.0/25 NetAccess</pre>
+  <img src="captures/02-networks.png" alt="docker network ls">
 
-<!-- ══════════════════════════════════════════
-     ÉTAPE 1
-══════════════════════════════════════════ -->
-<div class="step">
-  <div class="step-header">
-    <span class="step-num">Étape 1</span>
-    <span class="step-title">Création des réseaux Docker</span>
-  </div>
-
-  <p>
-    L'infrastructure est segmentée en 4 réseaux isolés pour simuler des zones de sécurité distinctes
-    (DMZ applicative, zone auth, zone admin, zone accès).
-  </p>
-  <pre>docker network create --driver=bridge --subnet=192.168.101.0/25 NetApp
-docker network create --driver=bridge --subnet=192.168.101.128/25 NetAuth
-docker network create --driver=bridge --subnet=192.168.102.128/25 NetAdmin
-docker network create --driver=bridge --subnet=192.168.102.0/25 NetAccess</pre>
-
-  <p>Vérification :</p>
-  <pre>docker network ls</pre>
-  <div class="screenshot"><span>📸</span>Capture : liste des réseaux Docker avec NetApp, NetAuth, NetAdmin, NetAccess</div>
-
-  <table>
-    <tr><th>Réseau</th><th>Sous-réseau</th><th>Rôle</th></tr>
-    <tr><td>NetApp</td><td>192.168.101.0/25</td><td>Zone applicative (apps métier)</td></tr>
-    <tr><td>NetAuth</td><td>192.168.101.128/25</td><td>Zone d'authentification (Keycloak, StepCA)</td></tr>
-    <tr><td>NetAdmin</td><td>192.168.102.128/25</td><td>Zone d'administration (Dockhand)</td></tr>
-    <tr><td>NetAccess</td><td>192.168.102.0/25</td><td>Zone d'accès client (CoreDNS)</td></tr>
-  </table>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 2
-══════════════════════════════════════════ -->
-<div class="step">
-  <div class="step-header">
-    <span class="step-num">Étape 2</span>
-    <span class="step-title">Lancement de CoreDNS</span>
-  </div>
-
-  <p>
-    CoreDNS assure la résolution DNS interne pour les conteneurs. Il résout les noms
-    <code>*.tpiam.internal</code> et relaie les autres requêtes vers DNS4EU.
-  </p>
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 2 — CoreDNS</h2>
+  <p>CoreDNS gère la résolution DNS interne pour les conteneurs.</p>
   <pre>docker compose -f compose\dns\compose.yml up -d</pre>
+  <pre>nslookup portail.tpiam.internal 127.0.0.1</pre>
+  <img src="captures/03-nslookup.png" alt="nslookup portail.tpiam.internal">
 
-  <p>Test de résolution :</p>
-  <pre>nslookup portail.tpiam.internal 127.0.0.1
-nslookup google.com 127.0.0.1</pre>
-  <div class="screenshot"><span>📸</span>Capture : nslookup résolvant portail.tpiam.internal → 127.0.0.1</div>
-
-  <div class="warn">
-    Si le port 53 est déjà occupé par le service "Client DNS" de Windows, le désactiver :<br>
-    <code>Stop-Service -Name "Dnscache"</code> puis <code>Set-Service -Name "Dnscache" -StartupType Disabled</code>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 3
-══════════════════════════════════════════ -->
-<div class="step">
-  <div class="step-header">
-    <span class="step-num">Étape 3</span>
-    <span class="step-title">Lancement de Dockhand</span>
-  </div>
-
-  <p>
-    Dockhand est une interface web de gestion Docker. Elle permet de voir les conteneurs,
-    consulter les logs et ouvrir des consoles sans passer par la ligne de commande.
-    Elle sera sécurisée via OIDC à l'étape 13.
-  </p>
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 3 — Dockhand</h2>
+  <p>Interface web de gestion Docker (logs, consoles, containers).</p>
   <pre>docker compose -f compose\dockhand\compose.yml up -d</pre>
+  <img src="captures/04-dockhand.png" alt="interface Dockhand">
 
-  <p>Accès initial (avant Caddy) : <code>http://localhost:3001</code></p>
-  <p>Configuration initiale : <strong>Settings → Environments → Unix Socket</strong></p>
-  <div class="screenshot"><span>📸</span>Capture : interface Dockhand accessible sur localhost:3001</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 4
-══════════════════════════════════════════ -->
-<div class="step">
-  <div class="step-header">
-    <span class="step-num">Étape 4</span>
-    <span class="step-title">Lancement de Mailhog</span>
-  </div>
-
-  <p>
-    Mailhog est un serveur SMTP piège (sink) : il intercepte tous les emails sans les envoyer.
-    Il permet de tester les envois de Keycloak (reset de mot de passe, vérification d'email).
-  </p>
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 4 — Mailhog</h2>
+  <p>Serveur SMTP piège pour intercepter les emails de Keycloak.</p>
   <pre>docker compose -f compose\mailhog\compose.yml up -d</pre>
+  <img src="captures/07-mailhog.png" alt="boîte de réception Mailhog">
 
-  <p>Interface web : <code>http://localhost:8025</code></p>
-  <div class="screenshot"><span>📸</span>Capture : boîte de réception Mailhog (interface web)</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 5
-══════════════════════════════════════════ -->
-<div class="step">
-  <div class="step-header">
-    <span class="step-num">Étape 5</span>
-    <span class="step-title">Lancement de Caddy (Reverse Proxy)</span>
-  </div>
-
-  <p>
-    Caddy est le reverse proxy HTTPS. Il est le point d'entrée unique de l'infrastructure,
-    termine le TLS et redirige les requêtes vers le bon service selon le nom de domaine.
-  </p>
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 5 — Caddy (Reverse Proxy)</h2>
+  <p>Point d'entrée HTTPS unique. Redirige les requêtes vers le bon service selon le domaine.</p>
   <pre>docker compose -f compose\caddy\compose.yml up -d</pre>
+  <img src="captures/05b-caddy-lancement.png" alt="lancement Caddy en terminal">
+  <img src="captures/09-caddy-logs.png" alt="logs Caddy dans Dockhand">
 
-  <p>Vérification des logs :</p>
-  <pre>docker logs RP-caddy --tail 20</pre>
-  <div class="screenshot"><span>📸</span>Capture : logs Caddy au démarrage (pas d'erreur)</div>
-
-  <div class="note">
-    À ce stade, Caddy utilise des certificats TLS auto-signés temporaires. Le navigateur
-    affiche un avertissement de sécurité — c'est normal. On configurera notre propre PKI
-    à l'étape 10.
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 6
-══════════════════════════════════════════ -->
-<div class="step">
-  <div class="step-header">
-    <span class="step-num">Étape 6</span>
-    <span class="step-title">Lancement de Dashy (Portail)</span>
-  </div>
-
-  <p>Dashy est le portail web centralisant les liens vers tous les services de l'infrastructure.</p>
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 6 — Dashy (Portail)</h2>
   <pre>docker compose -f compose\dashy\compose.yml up -d</pre>
+  <img src="captures/05-portail.png" alt="portail Dashy">
 
-  <p>Accès : <code>https://portail.tpiam.internal</code></p>
-  <div class="screenshot"><span>📸</span>Capture : portail Dashy accessible via https://portail.tpiam.internal</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 7
-══════════════════════════════════════════ -->
-<div class="step">
-  <div class="step-header">
-    <span class="step-num">Étape 7</span>
-    <span class="step-title">Lancement de SimpleApp (Flask)</span>
-  </div>
-
-  <p>
-    SimpleApp est une petite application Flask qui affiche tous les headers HTTP reçus.
-    Elle est utile pour observer les informations transmises par le reverse proxy et l'IdP.
-  </p>
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 7 — SimpleApp (Flask)</h2>
+  <p>Application Flask qui affiche les headers HTTP reçus.</p>
   <pre>docker compose -f compose\simpleapp\compose.yml build
 docker compose -f compose\simpleapp\compose.yml up -d</pre>
+  <img src="captures/06-simpleapp.png" alt="SimpleApp HTTP Headers">
 
-  <p>Accès : <code>https://simpleapp.tpiam.internal</code></p>
-  <div class="screenshot"><span>📸</span>Capture : SimpleApp affichant les headers HTTP de la requête</div>
-</div>
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 8 — SimpleSAML</h2>
+  <pre>docker compose -f compose\simplesaml\compose.yml up -d</pre>
+  <img src="captures/08-simplesaml-install.png" alt="page d'accueil SimpleSAMLphp">
 
-<!-- ══════════════════════════════════════════
-     ÉTAPE 8
-══════════════════════════════════════════ -->
-<div class="step">
-  <div class="step-header">
-    <span class="step-num">Étape 8</span>
-    <span class="step-title">Lancement de SimpleSAML</span>
-  </div>
-
-  <p>
-    SimpleSAMLphp est le Service Provider SAML. Il sera configuré à l'étape 12 pour déléguer
-    l'authentification à Keycloak. Pour l'instant on le lance pour vérifier qu'il démarre.
-  </p>
-  <pre>docker compose -f compose\simplesaml\compose.yml up -d
-docker ps --filter name=simplesaml</pre>
-  <div class="screenshot"><span>📸</span>Capture : container simplesaml en statut "Up"</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 9
-══════════════════════════════════════════ -->
-<div class="step page-break">
-  <div class="step-header">
-    <span class="step-num">Étape 9</span>
-    <span class="step-title">PKI — Lancement de StepCA</span>
-  </div>
-
-  <p>
-    StepCA (Smallstep) est notre Autorité de Certification privée. Elle joue le rôle de
-    Let's Encrypt mais pour notre infrastructure interne. Elle émet les certificats TLS
-    de tous les services via le protocole ACME.
-  </p>
-
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 9 — StepCA (PKI)</h2>
+  <p>Autorité de Certification privée. Émet les certificats TLS via ACME comme Let's Encrypt.</p>
   <p>Premier lancement en mode attaché pour récupérer le mot de passe JWK :</p>
   <pre>docker compose -f compose\stepca\compose.yml up</pre>
-  <div class="warn">Le mot de passe du provisioner JWK s'affiche dans les logs au premier démarrage. Le noter immédiatement.</div>
-  <div class="screenshot"><span>📸</span>Capture : logs StepCA avec le mot de passe JWK visible</div>
+  <img src="captures/09-stepca-console.png" alt="console StepCA — secrets et clé intermédiaire">
 
-  <p>Relancement en mode détaché :</p>
-  <pre>docker compose -f compose\stepca\compose.yml up -d</pre>
+  <p>Inspection des certificats depuis la console du container :</p>
+  <pre>step certificate inspect $(step path)/certs/root_ca.crt</pre>
+  <img src="captures/09b-stepca-cert-inspect.png" alt="step certificate inspect — intermediate CA">
 
-  <h3>Inspection des certificats</h3>
-  <p>Depuis la console du container <code>step-ca</code> (via Dockhand) :</p>
-  <pre>step certificate inspect $(step path)/certs/root_ca.crt
-step certificate inspect $(step path)/certs/intermediate_ca.crt</pre>
-  <div class="screenshot"><span>📸</span>Capture : inspection du certificat root CA (Subject, Validity, Key Usage)</div>
-
-  <h3>Changement du mot de passe de la clé intermédiaire</h3>
-  <pre>step crypto change-pass $(step path)/secrets/intermediate_ca_key</pre>
-  <p>Saisir l'ancien mot de passe (JWK), puis définir le nouveau. Mettre à jour le fichier <code>secrets/password</code>.</p>
-
-  <h3>Création d'un certificat de test</h3>
-  <pre>step certificate create test.subject test.csr test.key --csr
-step certificate inspect test.csr</pre>
-  <div class="screenshot"><span>📸</span>Capture : CSR généré et inspecté avec succès</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 10
-══════════════════════════════════════════ -->
-<div class="step">
-  <div class="step-header">
-    <span class="step-num">Étape 10</span>
-    <span class="step-title">PKI — Configuration ACME avec Caddy</span>
-  </div>
-
-  <p>
-    On configure Caddy pour obtenir ses certificats TLS auprès de StepCA via ACME,
-    exactement comme Let's Encrypt mais avec notre CA privée.
-  </p>
-
-  <h3>Récupération du certificat root</h3>
-  <p>Depuis la console du container <code>step-ca</code> :</p>
-  <pre>cat $(step path)/certs/root_ca.crt</pre>
-  <p>Copier le contenu PEM dans <code>compose/caddy/root-ca.pem</code>.</p>
-
-  <h3>Mise à jour du Caddyfile</h3>
-  <p>Ajout du bloc TLS ACME pour chaque virtual host, pointant vers StepCA :</p>
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 10 — ACME avec Caddy</h2>
+  <p>On configure Caddy pour obtenir ses certificats TLS auprès de StepCA via ACME.</p>
+  <p>Le certificat root de StepCA est monté dans Caddy pour établir la confiance. Le Caddyfile est mis à jour avec le
+    bloc TLS ACME :</p>
   <pre>tls {
   ca https://step-ca:9443/acme/acme/directory
   ca_root /etc/caddy/trusted-roots/root-ca.pem
 }</pre>
+  <pre>docker compose -f compose\caddy\compose.yml up -d --force-recreate</pre>
 
-  <h3>Relancement de Caddy</h3>
-  <pre>docker compose -f compose\caddy\compose.yml down
-docker compose -f compose\caddy\compose.yml up -d</pre>
+  <p><strong>Importation des certificats dans le navigateur via le Caddyfile</strong></p>
+  <img src="captures/10-caddy-https.png" alt="caddyhttps">
 
-  <p>Vérification dans le navigateur : le certificat de <code>https://portail.tpiam.internal</code> doit être émis par <strong>TPiam PKI</strong>.</p>
-  <div class="screenshot"><span>📸</span>Capture : cadenas HTTPS → certificat émis par "TPiam PKI" (et non auto-signé)</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 11
-══════════════════════════════════════════ -->
-<div class="step page-break">
-  <div class="step-header">
-    <span class="step-num">Étape 11</span>
-    <span class="step-title">Lancement de Keycloak (IdP)</span>
-  </div>
-
-  <p>
-    Keycloak est l'Identity Provider (IdP) central. Il gère l'authentification des utilisateurs
-    et supporte SAML 2.0 et OpenID Connect. Il est associé à une base PostgreSQL.
-  </p>
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 11 — Keycloak (IdP)</h2>
   <pre>docker compose -f compose\keycloak\compose.yml up -d</pre>
 
-  <p>Accès admin : <code>https://idp.tpiam.internal</code> — login : <code>admin / admin</code></p>
-  <div class="screenshot"><span>📸</span>Capture : interface d'administration Keycloak</div>
-
-  <h3>Création du Realm tpiam</h3>
-  <p>Menu <strong>Manage Realm → Create Realm</strong> → nom : <code>tpiam</code></p>
-  <div class="screenshot"><span>📸</span>Capture : realm "tpiam" créé dans la liste des realms</div>
+  <h3>Création du realm tpiam</h3>
+  <img src="captures/11-keycloak-realms.png" alt="Keycloak — realm tpiam créé">
 
   <h3>Configuration email (Mailhog)</h3>
-  <p>Realm Settings → Email :</p>
-  <ul>
-    <li>Host : <code>mailhog</code> | Port : <code>1025</code></li>
-    <li>From : <code>keycloak@tpiam.internal</code></li>
-    <li>SSL / StartTLS / Authentication : désactivés</li>
-  </ul>
-  <div class="screenshot"><span>📸</span>Capture : test de connexion email → "Success" + email visible dans Mailhog</div>
+  <p>Host : mailhog | Port : 1025 | SSL/Auth : désactivés</p>
+  <img src="captures/11d-keycloak-email-config.png" alt="Keycloak — configuration email Mailhog">
+  <img src="captures/11e-mailhog-test-email.png" alt="Mailhog — email de test reçu">
 
   <h3>Création des utilisateurs</h3>
-  <table>
-    <tr><th>Username</th><th>Email</th><th>Mot de passe</th></tr>
-    <tr><td>alice</td><td>alice@tpiam.internal</td><td>Alice123!</td></tr>
-    <tr><td>bob</td><td>bob@tpiam.internal</td><td>Bob12345!</td></tr>
-    <tr><td>charlie</td><td>charlie@tpiam.internal</td><td>Charlie1!</td></tr>
-  </table>
-  <div class="screenshot"><span>📸</span>Capture : liste des 3 utilisateurs créés dans Keycloak (realm tpiam)</div>
-</div>
+  <img src="captures/11c-keycloak-users.png" alt="Keycloak — liste des utilisateurs">
 
-<!-- ══════════════════════════════════════════
-     ÉTAPE 12
-══════════════════════════════════════════ -->
-<div class="step page-break">
-  <div class="step-header">
-    <span class="step-num">Étape 12</span>
-    <span class="step-title">SAML — Intégration SimpleSAML / Keycloak</span>
-  </div>
-
-  <p>
-    On configure SimpleSAMLphp comme Service Provider (SP) et Keycloak comme Identity Provider (IdP).
-    Le SP délègue l'authentification à Keycloak via le protocole SAML 2.0. Les AuthnRequests
-    sont signées avec un certificat X.509 pour garantir leur intégrité.
-  </p>
-
-  <h3>12.1 — Configuration du SP (authsources.php)</h3>
-  <p>
-    Ce fichier définit l'identité du SP (<code>entityID</code>), l'IdP cible et les fichiers
-    de certificats pour la signature :
-  </p>
+  <!-- ─────────────────────────────────── -->
+  <h2>Étape 12 — SAML : SimpleSAML ↔ Keycloak</h2>
+  <h3>Comme le .tar n'était pas précisé dans le TP j'ai utilisé la version php de simplsaml qui demande d'avoir des
+    fichiers .php pour les configurations et la gestions des clés / certificats</h3>
+  <h3>authsources.php</h3>
+  <p>Définit l'identité du SP, l'IdP cible et les certificats de signature :</p>
   <pre>&lt;?php
 $config = [
     'admin' => ['core:AdminPassword'],
@@ -546,251 +223,35 @@ $config = [
         'certificate' => 'saml.crt',
     ],
 ];</pre>
+  <img src="captures/12d-authsources.png" alt="authsources.php dans l'éditeur">
 
-  <h3>12.2 — Métadonnées de l'IdP (saml20-idp-remote.php)</h3>
-  <p>
-    Ce fichier décrit Keycloak côté SP : ses endpoints SSO/SLO, le binding utilisé
-    (HTTP-Redirect) et son certificat de signature (extrait depuis
-    <code>https://idp.tpiam.internal/realms/tpiam/protocol/saml/descriptor</code>).
-  </p>
+  <h3>saml20-idp-remote.php</h3>
+  <p>Décrit Keycloak côté SP (endpoints, binding HTTP-Redirect, certificat IdP) :</p>
   <pre>&lt;?php
 $metadata['https://idp.tpiam.internal/realms/tpiam'] = [
-    'entityid'          => 'https://idp.tpiam.internal/realms/tpiam',
-    'sign.authnrequest' => true,
+    'sign.authnrequest'           => true,
     'SingleSignOnService'         => 'https://idp.tpiam.internal/realms/tpiam/protocol/saml',
     'SingleSignOnService.binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-    'SingleLogoutService'         => 'https://idp.tpiam.internal/realms/tpiam/protocol/saml',
-    'SingleLogoutService.binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-    'certData' => '/* certificat X.509 Keycloak */',
+    'certData'                    => '/* certificat Keycloak extrait du SAML descriptor */',
 ];</pre>
-  <div class="screenshot"><span>📸</span>Capture : fichier saml20-idp-remote.php dans l'éditeur</div>
+  <img src="captures/12c-saml20-idp-remote.png" alt="saml20-idp-remote.php dans l'éditeur">
 
-  <h3>12.3 — Génération du certificat SP (via Keycloak)</h3>
-  <p>
-    Keycloak génère la paire de clés RSA pour le client SP (onglet <strong>Keys → Generate new keys</strong>).
-    Il conserve la clé publique et exporte un fichier <code>keystore.jks</code> contenant la clé privée.
+  <h3>Génération du certificat SP</h3>
+  <p>Depuis Keycloak (onglet <strong>Keys</strong> du client SAML → <strong>Generate new keys</strong>), on génère une
+    paire de clés et on télécharge le <code>keystore.jks</code>. On extrait ensuite la clé privée et le certificat au
+    format PEM pour les placer dans <code>compose/simplesaml/certs/</code> :</p>
+  <img src="captures/12-keycloak-saml-keys.png" alt="Keycloak — onglet Keys du client SAML">
+  <img src="captures/12b-simplesaml-certs-tree.png" alt="Arborescence certs — saml.pem et saml.crt">
+
+  <p>Les deux fichiers (<code>saml.pem</code> et <code>saml.crt</code>) sont référencés dans
+    <code>authsources.php</code> et montés dans le conteneur SimpleSAML via le volume <code>./certs</code>. On relance
+    le conteneur :
   </p>
-  <div class="screenshot"><span>📸</span>Capture : génération des clés dans Keycloak (onglet Keys du client SAML)</div>
-
-  <p>Conversion JKS → PKCS12 via Docker (pas de Java installé sur le host) :</p>
-  <pre>docker run --rm -v "c:\...\TP_PublicKeyInterface-PKI-:/work" eclipse-temurin:21-jre-alpine \
-  sh -c "keytool -importkeystore -srckeystore /work/keystore.jks \
-         -destkeystore /work/keystore.p12 -deststoretype PKCS12 \
-         -srcstorepass password -deststorepass password -noprompt"</pre>
-
-  <p>Extraction en PEM avec OpenSSL :</p>
-  <pre># Clé privée
-openssl pkcs12 -in keystore.p12 -passin pass:password -nocerts -nodes \
-        -out compose/simplesaml/certs/saml.pem
-
-# Certificat public
-openssl pkcs12 -in keystore.p12 -passin pass:password -clcerts -nokeys \
-        -out compose/simplesaml/certs/saml.crt</pre>
-
-  <h3>12.4 — Import des métadonnées SP dans Keycloak</h3>
-  <p>
-    Pour éviter toute erreur de saisie, on importe les métadonnées XML générées automatiquement
-    par SimpleSAML dans Keycloak. Cela configure automatiquement le bon Client ID, l'ACS URL
-    et le certificat de signature du SP.
-  </p>
-  <pre>curl -sk https://simplesaml.tpiam.internal/simplesaml/module.php/saml/sp/metadata.php/default-sp \
-     -o sp-metadata.xml</pre>
-  <p>Dans Keycloak : <strong>Clients → Import client → sp-metadata.xml</strong></p>
-  <div class="screenshot"><span>📸</span>Capture : client "https://simplesaml.tpiam.internal" importé dans Keycloak</div>
-
-  <div class="note">
-    L'ACS URL configurée dans Keycloak doit être exactement :<br>
-    <code>https://simplesaml.tpiam.internal/simplesaml/module.php/saml/sp/saml2-acs.php/default-sp</code>
-  </div>
-
-  <h3>12.5 — Configuration du compose SimpleSAML</h3>
-  <p>
-    Deux points critiques dans le <code>compose.yml</code> de SimpleSAML :
-  </p>
-  <ul>
-    <li><code>CONFIG_BASEURLPATH</code> doit être l'URL <strong>https</strong> complète — sans cela,
-    SimpleSAML génère les callbacks en <code>http://</code> et Keycloak renvoie une erreur 400
-    (mismatch ACS URL).</li>
-    <li>Le dossier <code>certs/</code> est monté dans <code>/var/simplesamlphp/cert/</code>.</li>
-  </ul>
-  <pre>environment:
-  - CONFIG_BASEURLPATH=https://simplesaml.tpiam.internal/simplesaml/
-volumes:
-  - ./authsources.php:/var/simplesamlphp/config/authsources.php:ro
-  - ./saml20-idp-remote.php:/var/simplesamlphp/metadata/saml20-idp-remote.php:ro
-  - ./certs:/var/simplesamlphp/cert:ro</pre>
 
   <pre>docker compose -f compose\simplesaml\compose.yml up -d --force-recreate</pre>
-
-  <h3>12.6 — Test du flux SAML</h3>
-  <p>Accéder à :</p>
-  <pre>https://simplesaml.tpiam.internal/simplesaml/module.php/core/authenticate.php?as=default-sp</pre>
-  <div class="screenshot"><span>📸</span>Capture : page de login Keycloak après redirection depuis SimpleSAML</div>
-  <div class="screenshot"><span>📸</span>Capture : attributs SAML affichés par SimpleSAML après connexion réussie</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 13
-══════════════════════════════════════════ -->
-<div class="step page-break">
-  <div class="step-header">
-    <span class="step-num">Étape 13</span>
-    <span class="step-title">OIDC — Intégration Dockhand / Keycloak</span>
-  </div>
-
-  <p>
-    On configure Dockhand pour authentifier ses utilisateurs via OpenID Connect (OIDC).
-    Keycloak joue le rôle d'Authorization Server, Dockhand est le Relying Party.
-    Le flux utilisé est le <strong>Authorization Code Flow</strong>.
-  </p>
-
-  <h3>13.1 — Création du client OIDC dans Keycloak</h3>
-  <p>Clients → Create client :</p>
-  <ul>
-    <li>Client type : <strong>OpenID Connect</strong></li>
-    <li>Client ID : <code>dockhand</code></li>
-    <li>Client authentication : <strong>ON</strong> (mode confidential)</li>
-    <li>Standard flow : activé</li>
-    <li>Valid redirect URI : <code>https://dockhand.tpiam.internal/api/auth/oidc/callback</code></li>
-  </ul>
-  <div class="screenshot"><span>📸</span>Capture : client "dockhand" créé dans Keycloak (onglet Settings)</div>
-
-  <h3>13.2 — Récupération du Client Secret</h3>
-  <p>Onglet <strong>Credentials</strong> du client dockhand → copier le <strong>Client secret</strong>.</p>
-  <div class="screenshot"><span>📸</span>Capture : onglet Credentials avec le Client Secret</div>
-
-  <h3>13.3 — Configuration OIDC dans Dockhand</h3>
-  <p>Dans l'interface Dockhand, Settings → Authentication / OIDC :</p>
-  <ul>
-    <li>Issuer URL : <code>https://idp.tpiam.internal/realms/tpiam</code></li>
-    <li>Client ID : <code>dockhand</code></li>
-    <li>Client Secret : (valeur copiée)</li>
-  </ul>
-  <div class="screenshot"><span>📸</span>Capture : connexion OIDC réussie — utilisateur "alice" connecté dans Dockhand</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 14
-══════════════════════════════════════════ -->
-<div class="step">
-  <div class="step-header">
-    <span class="step-num">Étape 14</span>
-    <span class="step-title">Sécurisation de l'accès Dockhand</span>
-  </div>
-
-  <p>
-    Le port direct <code>3001</code> est supprimé du <code>compose.yml</code> de Dockhand.
-    L'application n'est désormais accessible que via le reverse proxy Caddy (HTTPS),
-    ce qui force l'authentification OIDC.
-  </p>
-
-  <p>Vérification que l'accès direct est bien bloqué :</p>
-  <pre>curl http://localhost:3001</pre>
-  <div class="success">Attendu : erreur de connexion — le port n'est plus publié.</div>
-  <div class="screenshot"><span>📸</span>Capture : curl localhost:3001 → "Connection refused"</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 15
-══════════════════════════════════════════ -->
-<div class="step page-break">
-  <div class="step-header">
-    <span class="step-num">Étape 15</span>
-    <span class="step-title">Politique de mot de passe</span>
-  </div>
-
-  <p>
-    On configure une politique de mot de passe dans Keycloak pour imposer des règles
-    de complexité sur le realm tpiam.
-  </p>
-
-  <p>Keycloak → Authentication → Policies → Password policy :</p>
-  <table>
-    <tr><th>Règle</th><th>Valeur</th></tr>
-    <tr><td>Minimum Length</td><td>8 caractères</td></tr>
-    <tr><td>Uppercase Characters</td><td>1 minimum</td></tr>
-    <tr><td>Lowercase Characters</td><td>1 minimum</td></tr>
-    <tr><td>Digits</td><td>1 minimum</td></tr>
-    <tr><td>Special Characters</td><td>1 minimum</td></tr>
-    <tr><td>Not Recently Used</td><td>3 derniers mots de passe</td></tr>
-  </table>
-  <div class="screenshot"><span>📸</span>Capture : politique de mot de passe configurée dans Keycloak</div>
-
-  <h3>Vérification</h3>
-  <p>Tenter un reset de mot de passe pour alice avec <code>abc</code> → refusé, puis <code>Alice2026!</code> → accepté.</p>
-  <div class="screenshot"><span>📸</span>Capture : message d'erreur Keycloak sur mot de passe trop faible</div>
-  <div class="screenshot"><span>📸</span>Capture : nouveau mot de passe conforme accepté</div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     ÉTAPE 16
-══════════════════════════════════════════ -->
-<div class="step">
-  <div class="step-header">
-    <span class="step-num">Étape 16</span>
-    <span class="step-title">MFA / OTP</span>
-  </div>
-
-  <p>
-    On active l'authentification multi-facteurs (MFA) en rendant l'OTP (One-Time Password)
-    obligatoire pour tous les utilisateurs du realm tpiam.
-  </p>
-
-  <h3>16.1 — Activation de l'OTP obligatoire</h3>
-  <p>Keycloak → Authentication → Flows → <strong>browser</strong> :</p>
-  <p>Changer <strong>Browser - Conditional OTP</strong> de <em>Conditional</em> à <em>Required</em>.</p>
-  <div class="screenshot"><span>📸</span>Capture : flux "browser" avec OTP en mode "Required"</div>
-
-  <h3>16.2 — Première connexion avec OTP</h3>
-  <p>En navigation privée, se connecter avec <code>bob / Bob12345!</code> :</p>
-  <ol>
-    <li>Keycloak affiche la page <strong>Configure OTP</strong> avec un QR code</li>
-    <li>Scanner le QR code avec Google Authenticator / Authy / FreeOTP</li>
-    <li>Saisir le code à 6 chiffres généré → connexion réussie</li>
-  </ol>
-  <div class="screenshot"><span>📸</span>Capture : page Keycloak "Configure OTP" avec QR code</div>
-  <div class="screenshot"><span>📸</span>Capture : saisie du code OTP et connexion réussie dans Dockhand</div>
-
-  <h3>16.3 — Vérification aux connexions suivantes</h3>
-  <p>Se déconnecter puis se reconnecter → Keycloak demande directement le code OTP (2ème facteur) sans afficher à nouveau le QR code.</p>
-  <div class="screenshot"><span>📸</span>Capture : page de saisie OTP lors d'une connexion ultérieure</div>
-
-  <div class="success">
-    Le MFA est opérationnel. Chaque connexion nécessite désormais le mot de passe + le code TOTP.
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     CONCLUSION
-══════════════════════════════════════════ -->
-<div class="step page-break">
-  <div class="step-header">
-    <span class="step-num">Bilan</span>
-    <span class="step-title">Récapitulatif de l'infrastructure déployée</span>
-  </div>
-
-  <p>À l'issue du TP, l'infrastructure suivante est opérationnelle :</p>
-
-  <table>
-    <tr><th>Service</th><th>URL</th><th>Protocole</th><th>Statut</th></tr>
-    <tr><td>Portail (Dashy)</td><td>https://portail.tpiam.internal</td><td>HTTPS/TLS (StepCA)</td><td>Opérationnel</td></tr>
-    <tr><td>SimpleApp</td><td>https://simpleapp.tpiam.internal</td><td>HTTPS/TLS</td><td>Opérationnel</td></tr>
-    <tr><td>SimpleSAML (SP)</td><td>https://simplesaml.tpiam.internal</td><td>SAML 2.0</td><td>Opérationnel</td></tr>
-    <tr><td>Dockhand</td><td>https://dockhand.tpiam.internal</td><td>OIDC</td><td>Opérationnel</td></tr>
-    <tr><td>Keycloak (IdP)</td><td>https://idp.tpiam.internal</td><td>SAML + OIDC</td><td>Opérationnel</td></tr>
-    <tr><td>Mailhog</td><td>https://mail.tpiam.internal</td><td>SMTP (sink)</td><td>Opérationnel</td></tr>
-    <tr><td>StepCA (PKI)</td><td>https://step-ca:9443</td><td>ACME</td><td>Opérationnel</td></tr>
-  </table>
-
-  <h3>Points clés appris</h3>
-  <ul>
-    <li><strong>PKI :</strong> création d'une CA privée avec StepCA, émission de certificats via ACME</li>
-    <li><strong>SAML 2.0 :</strong> configuration SP/IdP, signing des AuthnRequests, gestion des bindings (HTTP-Redirect vs HTTP-POST), extraction de clés depuis un keystore JKS</li>
-    <li><strong>OIDC :</strong> Authorization Code Flow, client confidential, callback URI</li>
-    <li><strong>Sécurité :</strong> MFA/TOTP obligatoire, politique de complexité des mots de passe</li>
-    <li><strong>Infrastructure :</strong> segmentation réseau Docker, reverse proxy HTTPS, résolution DNS interne</li>
-  </ul>
-</div>
+  <p> On a bien la redirection vers keycloak qui nous demande de nous identifier.</p>
+  <img src="captures/12e-keycloak-login.png" alt="Page de login Keycloak après redirection SAML">
 
 </body>
+
 </html>
